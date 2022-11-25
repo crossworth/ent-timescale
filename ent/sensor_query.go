@@ -25,6 +25,7 @@ type SensorQuery struct {
 	order      []OrderFunc
 	fields     []string
 	predicates []predicate.Sensor
+	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -331,6 +332,9 @@ func (sq *SensorQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Senso
 		nodes = append(nodes, node)
 		return node.assignValues(columns, values)
 	}
+	if len(sq.modifiers) > 0 {
+		_spec.Modifiers = sq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -345,6 +349,9 @@ func (sq *SensorQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Senso
 
 func (sq *SensorQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := sq.querySpec()
+	if len(sq.modifiers) > 0 {
+		_spec.Modifiers = sq.modifiers
+	}
 	_spec.Node.Columns = sq.fields
 	if len(sq.fields) > 0 {
 		_spec.Unique = sq.unique != nil && *sq.unique
@@ -426,6 +433,9 @@ func (sq *SensorQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if sq.unique != nil && *sq.unique {
 		selector.Distinct()
 	}
+	for _, m := range sq.modifiers {
+		m(selector)
+	}
 	for _, p := range sq.predicates {
 		p(selector)
 	}
@@ -441,6 +451,12 @@ func (sq *SensorQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (sq *SensorQuery) Modify(modifiers ...func(s *sql.Selector)) *SensorSelect {
+	sq.modifiers = append(sq.modifiers, modifiers...)
+	return sq.Select()
 }
 
 // SensorGroupBy is the group-by builder for Sensor entities.
@@ -552,4 +568,10 @@ func (ss *SensorSelect) sqlScan(ctx context.Context, v any) error {
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (ss *SensorSelect) Modify(modifiers ...func(s *sql.Selector)) *SensorSelect {
+	ss.modifiers = append(ss.modifiers, modifiers...)
+	return ss
 }

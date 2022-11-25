@@ -88,31 +88,17 @@ func SensorID(v string) predicate.Sensor {
 	})
 }
 
-// Longitude applies equality check predicate on the "longitude" field. It's identical to LongitudeEQ.
-func Longitude(v float64) predicate.Sensor {
+// Temperature applies equality check predicate on the "temperature" field. It's identical to TemperatureEQ.
+func Temperature(v float64) predicate.Sensor {
 	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldLongitude), v))
+		s.Where(sql.EQ(s.C(FieldTemperature), v))
 	})
 }
 
-// Latitude applies equality check predicate on the "latitude" field. It's identical to LatitudeEQ.
-func Latitude(v float64) predicate.Sensor {
+// ElectricCurrent applies equality check predicate on the "electric_current" field. It's identical to ElectricCurrentEQ.
+func ElectricCurrent(v float64) predicate.Sensor {
 	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldLatitude), v))
-	})
-}
-
-// Type applies equality check predicate on the "type" field. It's identical to TypeEQ.
-func Type(v string) predicate.Sensor {
-	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldType), v))
-	})
-}
-
-// Value applies equality check predicate on the "value" field. It's identical to ValueEQ.
-func Value(v float64) predicate.Sensor {
-	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldValue), v))
+		s.Where(sql.EQ(s.C(FieldElectricCurrent), v))
 	})
 }
 
@@ -222,294 +208,131 @@ func SensorIDContainsFold(v string) predicate.Sensor {
 	})
 }
 
-// LongitudeEQ applies the EQ predicate on the "longitude" field.
-func LongitudeEQ(v float64) predicate.Sensor {
+// TemperatureEQ applies the EQ predicate on the "temperature" field.
+func TemperatureEQ(v float64) predicate.Sensor {
 	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldLongitude), v))
+		s.Where(sql.EQ(s.C(FieldTemperature), v))
 	})
 }
 
-// LongitudeNEQ applies the NEQ predicate on the "longitude" field.
-func LongitudeNEQ(v float64) predicate.Sensor {
+// TemperatureNEQ applies the NEQ predicate on the "temperature" field.
+func TemperatureNEQ(v float64) predicate.Sensor {
 	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldLongitude), v))
+		s.Where(sql.NEQ(s.C(FieldTemperature), v))
 	})
 }
 
-// LongitudeIn applies the In predicate on the "longitude" field.
-func LongitudeIn(vs ...float64) predicate.Sensor {
+// TemperatureIn applies the In predicate on the "temperature" field.
+func TemperatureIn(vs ...float64) predicate.Sensor {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldLongitude), v...))
+		s.Where(sql.In(s.C(FieldTemperature), v...))
 	})
 }
 
-// LongitudeNotIn applies the NotIn predicate on the "longitude" field.
-func LongitudeNotIn(vs ...float64) predicate.Sensor {
+// TemperatureNotIn applies the NotIn predicate on the "temperature" field.
+func TemperatureNotIn(vs ...float64) predicate.Sensor {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldLongitude), v...))
+		s.Where(sql.NotIn(s.C(FieldTemperature), v...))
 	})
 }
 
-// LongitudeGT applies the GT predicate on the "longitude" field.
-func LongitudeGT(v float64) predicate.Sensor {
+// TemperatureGT applies the GT predicate on the "temperature" field.
+func TemperatureGT(v float64) predicate.Sensor {
 	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldLongitude), v))
+		s.Where(sql.GT(s.C(FieldTemperature), v))
 	})
 }
 
-// LongitudeGTE applies the GTE predicate on the "longitude" field.
-func LongitudeGTE(v float64) predicate.Sensor {
+// TemperatureGTE applies the GTE predicate on the "temperature" field.
+func TemperatureGTE(v float64) predicate.Sensor {
 	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldLongitude), v))
+		s.Where(sql.GTE(s.C(FieldTemperature), v))
 	})
 }
 
-// LongitudeLT applies the LT predicate on the "longitude" field.
-func LongitudeLT(v float64) predicate.Sensor {
+// TemperatureLT applies the LT predicate on the "temperature" field.
+func TemperatureLT(v float64) predicate.Sensor {
 	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldLongitude), v))
+		s.Where(sql.LT(s.C(FieldTemperature), v))
 	})
 }
 
-// LongitudeLTE applies the LTE predicate on the "longitude" field.
-func LongitudeLTE(v float64) predicate.Sensor {
+// TemperatureLTE applies the LTE predicate on the "temperature" field.
+func TemperatureLTE(v float64) predicate.Sensor {
 	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldLongitude), v))
+		s.Where(sql.LTE(s.C(FieldTemperature), v))
 	})
 }
 
-// LatitudeEQ applies the EQ predicate on the "latitude" field.
-func LatitudeEQ(v float64) predicate.Sensor {
+// ElectricCurrentEQ applies the EQ predicate on the "electric_current" field.
+func ElectricCurrentEQ(v float64) predicate.Sensor {
 	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldLatitude), v))
+		s.Where(sql.EQ(s.C(FieldElectricCurrent), v))
 	})
 }
 
-// LatitudeNEQ applies the NEQ predicate on the "latitude" field.
-func LatitudeNEQ(v float64) predicate.Sensor {
+// ElectricCurrentNEQ applies the NEQ predicate on the "electric_current" field.
+func ElectricCurrentNEQ(v float64) predicate.Sensor {
 	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldLatitude), v))
+		s.Where(sql.NEQ(s.C(FieldElectricCurrent), v))
 	})
 }
 
-// LatitudeIn applies the In predicate on the "latitude" field.
-func LatitudeIn(vs ...float64) predicate.Sensor {
+// ElectricCurrentIn applies the In predicate on the "electric_current" field.
+func ElectricCurrentIn(vs ...float64) predicate.Sensor {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldLatitude), v...))
+		s.Where(sql.In(s.C(FieldElectricCurrent), v...))
 	})
 }
 
-// LatitudeNotIn applies the NotIn predicate on the "latitude" field.
-func LatitudeNotIn(vs ...float64) predicate.Sensor {
+// ElectricCurrentNotIn applies the NotIn predicate on the "electric_current" field.
+func ElectricCurrentNotIn(vs ...float64) predicate.Sensor {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldLatitude), v...))
+		s.Where(sql.NotIn(s.C(FieldElectricCurrent), v...))
 	})
 }
 
-// LatitudeGT applies the GT predicate on the "latitude" field.
-func LatitudeGT(v float64) predicate.Sensor {
+// ElectricCurrentGT applies the GT predicate on the "electric_current" field.
+func ElectricCurrentGT(v float64) predicate.Sensor {
 	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldLatitude), v))
+		s.Where(sql.GT(s.C(FieldElectricCurrent), v))
 	})
 }
 
-// LatitudeGTE applies the GTE predicate on the "latitude" field.
-func LatitudeGTE(v float64) predicate.Sensor {
+// ElectricCurrentGTE applies the GTE predicate on the "electric_current" field.
+func ElectricCurrentGTE(v float64) predicate.Sensor {
 	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldLatitude), v))
+		s.Where(sql.GTE(s.C(FieldElectricCurrent), v))
 	})
 }
 
-// LatitudeLT applies the LT predicate on the "latitude" field.
-func LatitudeLT(v float64) predicate.Sensor {
+// ElectricCurrentLT applies the LT predicate on the "electric_current" field.
+func ElectricCurrentLT(v float64) predicate.Sensor {
 	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldLatitude), v))
+		s.Where(sql.LT(s.C(FieldElectricCurrent), v))
 	})
 }
 
-// LatitudeLTE applies the LTE predicate on the "latitude" field.
-func LatitudeLTE(v float64) predicate.Sensor {
+// ElectricCurrentLTE applies the LTE predicate on the "electric_current" field.
+func ElectricCurrentLTE(v float64) predicate.Sensor {
 	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldLatitude), v))
-	})
-}
-
-// TypeEQ applies the EQ predicate on the "type" field.
-func TypeEQ(v string) predicate.Sensor {
-	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldType), v))
-	})
-}
-
-// TypeNEQ applies the NEQ predicate on the "type" field.
-func TypeNEQ(v string) predicate.Sensor {
-	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldType), v))
-	})
-}
-
-// TypeIn applies the In predicate on the "type" field.
-func TypeIn(vs ...string) predicate.Sensor {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldType), v...))
-	})
-}
-
-// TypeNotIn applies the NotIn predicate on the "type" field.
-func TypeNotIn(vs ...string) predicate.Sensor {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldType), v...))
-	})
-}
-
-// TypeGT applies the GT predicate on the "type" field.
-func TypeGT(v string) predicate.Sensor {
-	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldType), v))
-	})
-}
-
-// TypeGTE applies the GTE predicate on the "type" field.
-func TypeGTE(v string) predicate.Sensor {
-	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldType), v))
-	})
-}
-
-// TypeLT applies the LT predicate on the "type" field.
-func TypeLT(v string) predicate.Sensor {
-	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldType), v))
-	})
-}
-
-// TypeLTE applies the LTE predicate on the "type" field.
-func TypeLTE(v string) predicate.Sensor {
-	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldType), v))
-	})
-}
-
-// TypeContains applies the Contains predicate on the "type" field.
-func TypeContains(v string) predicate.Sensor {
-	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldType), v))
-	})
-}
-
-// TypeHasPrefix applies the HasPrefix predicate on the "type" field.
-func TypeHasPrefix(v string) predicate.Sensor {
-	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldType), v))
-	})
-}
-
-// TypeHasSuffix applies the HasSuffix predicate on the "type" field.
-func TypeHasSuffix(v string) predicate.Sensor {
-	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldType), v))
-	})
-}
-
-// TypeEqualFold applies the EqualFold predicate on the "type" field.
-func TypeEqualFold(v string) predicate.Sensor {
-	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldType), v))
-	})
-}
-
-// TypeContainsFold applies the ContainsFold predicate on the "type" field.
-func TypeContainsFold(v string) predicate.Sensor {
-	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldType), v))
-	})
-}
-
-// ValueEQ applies the EQ predicate on the "value" field.
-func ValueEQ(v float64) predicate.Sensor {
-	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldValue), v))
-	})
-}
-
-// ValueNEQ applies the NEQ predicate on the "value" field.
-func ValueNEQ(v float64) predicate.Sensor {
-	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldValue), v))
-	})
-}
-
-// ValueIn applies the In predicate on the "value" field.
-func ValueIn(vs ...float64) predicate.Sensor {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldValue), v...))
-	})
-}
-
-// ValueNotIn applies the NotIn predicate on the "value" field.
-func ValueNotIn(vs ...float64) predicate.Sensor {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldValue), v...))
-	})
-}
-
-// ValueGT applies the GT predicate on the "value" field.
-func ValueGT(v float64) predicate.Sensor {
-	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldValue), v))
-	})
-}
-
-// ValueGTE applies the GTE predicate on the "value" field.
-func ValueGTE(v float64) predicate.Sensor {
-	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldValue), v))
-	})
-}
-
-// ValueLT applies the LT predicate on the "value" field.
-func ValueLT(v float64) predicate.Sensor {
-	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldValue), v))
-	})
-}
-
-// ValueLTE applies the LTE predicate on the "value" field.
-func ValueLTE(v float64) predicate.Sensor {
-	return predicate.Sensor(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldValue), v))
+		s.Where(sql.LTE(s.C(FieldElectricCurrent), v))
 	})
 }
 

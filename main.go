@@ -5,8 +5,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"math/rand"
-	"time"
 
 	"ent-timescale/ent"
 	"ent-timescale/ent/migrate"
@@ -16,10 +14,7 @@ import (
 	entsql "entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/schema"
 	_ "github.com/lib/pq"
-	"github.com/rs/xid"
 )
-
-// https://docs.timescale.com/api/latest/hypertable/create_hypertable/
 
 func main() {
 	db, err := sql.Open("postgres", "host=localhost port=5432 user=postgres dbname=timescaledb password=root sslmode=disable")
@@ -38,97 +33,79 @@ func main() {
 		ctx,
 		migrate.WithDropIndex(true),
 		migrate.WithDropColumn(true),
-		WithoutPrimaryKey(sensor.Table),
 		EnableTimescaleDBOption(db),
+		WithoutPrimaryKey(sensor.Table),
 		CreateHypertable(db, sensor.Table, sensor.FieldCreateTime),
 	)
 	if err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
-	// delete the data present
+	// delete the data present on the database on each run
 	client.Sensor.Delete().ExecX(ctx)
 
-	// create a few fake sensors
-	s1 := newTempSensor(-49.276855, -25.441105)
-	s2 := newTempSensor(34.855499, 32.109333)
-	s3 := newTempSensor(106.660172, 10.762622)
+	// create a few records
+	s1 := New("sensor_1")
+	s2 := New("sensor_2")
+	s3 := New("sensor_3")
+	s4 := New("sensor_4")
+	registerRecords(client, 10_000, s1)
+	registerRecords(client, 10_000, s2)
+	registerRecords(client, 10_000, s3)
+	registerRecords(client, 10_000, s4)
 
-	// store temperature on each one of them
-	recordTemperature(client, 1000, s1)
-	recordTemperature(client, 1000, s2)
-	recordTemperature(client, 1000, s3)
-
-	// querying
-
-	// number of temperature reading's by day
-	var tempByDay []struct {
-		Day   string
-		Count int
-	}
-	client.Sensor.Query().
-		GroupBy("1").
-		Aggregate(func(selector *entsql.Selector) string {
-			return "date_trunc('day', " + sensor.FieldCreateTime + ") AS day"
-		}, ent.Count()).
-		ScanX(ctx, &tempByDay)
-	for _, r := range tempByDay {
-		_ = r
-		// fmt.Println(r.Day, r.Count)
+	var possibleMachines []struct {
+		Period string
+		Avg    float64
+		Last   float64
 	}
 
-	// last temperature of each day (last 7 days) in Tel Aviv
-	var tempVaryByPeriod []struct {
-		Period      string  `json:"period"`
-		Temperature float32 `json:"temperature"`
+	// without feature flags
+	withAlias := func(alias string, aggregate func(selector *entsql.Selector) string) func(selector *entsql.Selector) string {
+		return func(selector *entsql.Selector) string {
+			return aggregate(selector) + " AS " + alias
+		}
 	}
-	client.Sensor.Query().
-		Where(sensor.SensorID(s2.id)).
+	avg := func(selector *entsql.Selector) string {
+		return "ABS(AVG(" + sensor.FieldTemperature + ") - AVG(" + sensor.FieldElectricCurrent + "))"
+	}
+	last := func(selector *entsql.Selector) string {
+		return "ABS(LAST(" + sensor.FieldTemperature + "," + sensor.FieldCreateTime + ") - LAST(" + sensor.FieldElectricCurrent + "," + sensor.FieldCreateTime + "))"
+	}
+	client.Debug().Sensor.Query().
+		Limit(10).
 		Order(ent.Desc("1")).
+		Where(func(selector *entsql.Selector) {
+			selector.Having(
+				entsql.Or(
+					entsql.GT(avg(selector), 40),
+					entsql.GT(last(selector), 40),
+				),
+			)
+		}).
 		GroupBy("1").
 		Aggregate(func(selector *entsql.Selector) string {
-			return "time_bucket('7 days', " + sensor.FieldCreateTime + ") AS period"
-		}, func(selector *entsql.Selector) string {
-			return "last(" + sensor.FieldValue + ", " + sensor.FieldCreateTime + ") AS temperature"
-		}).ScanX(ctx, &tempVaryByPeriod)
-	for _, r := range tempVaryByPeriod {
-		_ = r
-		// fmt.Println(r.Period, r.Temperature)
+			return "time_bucket('3 minutes', " + sensor.FieldCreateTime + ") AS period"
+		}, withAlias("avg", avg), withAlias("last", last)).
+		ScanX(ctx, &possibleMachines)
+	for _, r := range possibleMachines {
+		fmt.Println(r.Period, r.Avg, r.Last)
 	}
 
-	//
-}
+	possibleMachines = nil
 
-type tempSensor struct {
-	id   string
-	long float64
-	lat  float64
-}
-
-func (s tempSensor) temperature() float64 {
-	return -10 + rand.Float64()*(40-0)
-}
-
-func newTempSensor(long, lat float64) tempSensor {
-	return tempSensor{
-		id:   xid.New().String(),
-		long: long,
-		lat:  lat,
-	}
-}
-func recordTemperature(entClient *ent.Client, n int, s tempSensor) {
-	ctx := context.Background()
-	t := time.Now()
-	for i := 0; i < n; i++ {
-		entClient.Sensor.Create().
-			SetSensorID(s.id).
-			SetType("temperature").
-			SetLongitude(s.long).
-			SetLatitude(s.lat).
-			SetValue(s.temperature()).
-			SetCreateTime(t).
-			SaveX(ctx)
-		t = t.Add(-(time.Duration(i) * time.Minute))
+	// using feature flag modify
+	client.Debug().Sensor.Query().Modify(func(s *entsql.Selector) {
+		s.SelectExpr(entsql.Raw("time_bucket('3 minutes', create_time) AS period, ABS(AVG(temperature) - AVG(electric_current)) AS avg, ABS(LAST(temperature, create_time) - LAST(electric_current, create_time)) AS last"))
+		s.GroupBy("period")
+		s.Having(entsql.P(func(builder *entsql.Builder) {
+			builder.WriteString("ABS(AVG(temperature) - AVG(electric_current)) > 40 OR ABS(LAST(temperature, create_time) - LAST(electric_current, create_time)) > 40")
+		}))
+		s.OrderExpr(entsql.Raw("period DESC"))
+		s.Limit(10)
+	}).ScanX(ctx, &possibleMachines)
+	for _, r := range possibleMachines {
+		fmt.Println(r.Period, r.Avg, r.Last)
 	}
 }
 

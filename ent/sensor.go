@@ -19,14 +19,10 @@ type Sensor struct {
 	ID uuid.UUID `json:"id,omitempty"`
 	// SensorID holds the value of the "sensor_id" field.
 	SensorID string `json:"sensor_id,omitempty"`
-	// Longitude holds the value of the "longitude" field.
-	Longitude float64 `json:"longitude,omitempty"`
-	// Latitude holds the value of the "latitude" field.
-	Latitude float64 `json:"latitude,omitempty"`
-	// Type holds the value of the "type" field.
-	Type string `json:"type,omitempty"`
-	// Value holds the value of the "value" field.
-	Value float64 `json:"value,omitempty"`
+	// Temperature holds the value of the "temperature" field.
+	Temperature float64 `json:"temperature,omitempty"`
+	// ElectricCurrent holds the value of the "electric_current" field.
+	ElectricCurrent float64 `json:"electric_current,omitempty"`
 	// CreateTime holds the value of the "create_time" field.
 	CreateTime time.Time `json:"create_time,omitempty"`
 }
@@ -36,9 +32,9 @@ func (*Sensor) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case sensor.FieldLongitude, sensor.FieldLatitude, sensor.FieldValue:
+		case sensor.FieldTemperature, sensor.FieldElectricCurrent:
 			values[i] = new(sql.NullFloat64)
-		case sensor.FieldSensorID, sensor.FieldType:
+		case sensor.FieldSensorID:
 			values[i] = new(sql.NullString)
 		case sensor.FieldCreateTime:
 			values[i] = new(sql.NullTime)
@@ -71,29 +67,17 @@ func (s *Sensor) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				s.SensorID = value.String
 			}
-		case sensor.FieldLongitude:
+		case sensor.FieldTemperature:
 			if value, ok := values[i].(*sql.NullFloat64); !ok {
-				return fmt.Errorf("unexpected type %T for field longitude", values[i])
+				return fmt.Errorf("unexpected type %T for field temperature", values[i])
 			} else if value.Valid {
-				s.Longitude = value.Float64
+				s.Temperature = value.Float64
 			}
-		case sensor.FieldLatitude:
+		case sensor.FieldElectricCurrent:
 			if value, ok := values[i].(*sql.NullFloat64); !ok {
-				return fmt.Errorf("unexpected type %T for field latitude", values[i])
+				return fmt.Errorf("unexpected type %T for field electric_current", values[i])
 			} else if value.Valid {
-				s.Latitude = value.Float64
-			}
-		case sensor.FieldType:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field type", values[i])
-			} else if value.Valid {
-				s.Type = value.String
-			}
-		case sensor.FieldValue:
-			if value, ok := values[i].(*sql.NullFloat64); !ok {
-				return fmt.Errorf("unexpected type %T for field value", values[i])
-			} else if value.Valid {
-				s.Value = value.Float64
+				s.ElectricCurrent = value.Float64
 			}
 		case sensor.FieldCreateTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -132,17 +116,11 @@ func (s *Sensor) String() string {
 	builder.WriteString("sensor_id=")
 	builder.WriteString(s.SensorID)
 	builder.WriteString(", ")
-	builder.WriteString("longitude=")
-	builder.WriteString(fmt.Sprintf("%v", s.Longitude))
+	builder.WriteString("temperature=")
+	builder.WriteString(fmt.Sprintf("%v", s.Temperature))
 	builder.WriteString(", ")
-	builder.WriteString("latitude=")
-	builder.WriteString(fmt.Sprintf("%v", s.Latitude))
-	builder.WriteString(", ")
-	builder.WriteString("type=")
-	builder.WriteString(s.Type)
-	builder.WriteString(", ")
-	builder.WriteString("value=")
-	builder.WriteString(fmt.Sprintf("%v", s.Value))
+	builder.WriteString("electric_current=")
+	builder.WriteString(fmt.Sprintf("%v", s.ElectricCurrent))
 	builder.WriteString(", ")
 	builder.WriteString("create_time=")
 	builder.WriteString(s.CreateTime.Format(time.ANSIC))

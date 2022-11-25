@@ -12,10 +12,8 @@ var (
 	SensorsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
 		{Name: "sensor_id", Type: field.TypeString},
-		{Name: "longitude", Type: field.TypeFloat64},
-		{Name: "latitude", Type: field.TypeFloat64},
-		{Name: "type", Type: field.TypeString},
-		{Name: "value", Type: field.TypeFloat64},
+		{Name: "temperature", Type: field.TypeFloat64},
+		{Name: "electric_current", Type: field.TypeFloat64},
 		{Name: "create_time", Type: field.TypeTime},
 	}
 	// SensorsTable holds the schema information for the "sensors" table.
@@ -28,11 +26,6 @@ var (
 				Name:    "sensor_sensor_id",
 				Unique:  false,
 				Columns: []*schema.Column{SensorsColumns[1]},
-			},
-			{
-				Name:    "sensor_type",
-				Unique:  false,
-				Columns: []*schema.Column{SensorsColumns[4]},
 			},
 		},
 	}

@@ -31,22 +31,19 @@ const (
 // SensorMutation represents an operation that mutates the Sensor nodes in the graph.
 type SensorMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *uuid.UUID
-	sensor_id     *string
-	longitude     *float64
-	addlongitude  *float64
-	latitude      *float64
-	addlatitude   *float64
-	_type         *string
-	value         *float64
-	addvalue      *float64
-	create_time   *time.Time
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*Sensor, error)
-	predicates    []predicate.Sensor
+	op                  Op
+	typ                 string
+	id                  *uuid.UUID
+	sensor_id           *string
+	temperature         *float64
+	addtemperature      *float64
+	electric_current    *float64
+	addelectric_current *float64
+	create_time         *time.Time
+	clearedFields       map[string]struct{}
+	done                bool
+	oldValue            func(context.Context) (*Sensor, error)
+	predicates          []predicate.Sensor
 }
 
 var _ ent.Mutation = (*SensorMutation)(nil)
@@ -189,208 +186,116 @@ func (m *SensorMutation) ResetSensorID() {
 	m.sensor_id = nil
 }
 
-// SetLongitude sets the "longitude" field.
-func (m *SensorMutation) SetLongitude(f float64) {
-	m.longitude = &f
-	m.addlongitude = nil
+// SetTemperature sets the "temperature" field.
+func (m *SensorMutation) SetTemperature(f float64) {
+	m.temperature = &f
+	m.addtemperature = nil
 }
 
-// Longitude returns the value of the "longitude" field in the mutation.
-func (m *SensorMutation) Longitude() (r float64, exists bool) {
-	v := m.longitude
+// Temperature returns the value of the "temperature" field in the mutation.
+func (m *SensorMutation) Temperature() (r float64, exists bool) {
+	v := m.temperature
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldLongitude returns the old "longitude" field's value of the Sensor entity.
+// OldTemperature returns the old "temperature" field's value of the Sensor entity.
 // If the Sensor object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SensorMutation) OldLongitude(ctx context.Context) (v float64, err error) {
+func (m *SensorMutation) OldTemperature(ctx context.Context) (v float64, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldLongitude is only allowed on UpdateOne operations")
+		return v, errors.New("OldTemperature is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldLongitude requires an ID field in the mutation")
+		return v, errors.New("OldTemperature requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldLongitude: %w", err)
+		return v, fmt.Errorf("querying old value for OldTemperature: %w", err)
 	}
-	return oldValue.Longitude, nil
+	return oldValue.Temperature, nil
 }
 
-// AddLongitude adds f to the "longitude" field.
-func (m *SensorMutation) AddLongitude(f float64) {
-	if m.addlongitude != nil {
-		*m.addlongitude += f
+// AddTemperature adds f to the "temperature" field.
+func (m *SensorMutation) AddTemperature(f float64) {
+	if m.addtemperature != nil {
+		*m.addtemperature += f
 	} else {
-		m.addlongitude = &f
+		m.addtemperature = &f
 	}
 }
 
-// AddedLongitude returns the value that was added to the "longitude" field in this mutation.
-func (m *SensorMutation) AddedLongitude() (r float64, exists bool) {
-	v := m.addlongitude
+// AddedTemperature returns the value that was added to the "temperature" field in this mutation.
+func (m *SensorMutation) AddedTemperature() (r float64, exists bool) {
+	v := m.addtemperature
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ResetLongitude resets all changes to the "longitude" field.
-func (m *SensorMutation) ResetLongitude() {
-	m.longitude = nil
-	m.addlongitude = nil
+// ResetTemperature resets all changes to the "temperature" field.
+func (m *SensorMutation) ResetTemperature() {
+	m.temperature = nil
+	m.addtemperature = nil
 }
 
-// SetLatitude sets the "latitude" field.
-func (m *SensorMutation) SetLatitude(f float64) {
-	m.latitude = &f
-	m.addlatitude = nil
+// SetElectricCurrent sets the "electric_current" field.
+func (m *SensorMutation) SetElectricCurrent(f float64) {
+	m.electric_current = &f
+	m.addelectric_current = nil
 }
 
-// Latitude returns the value of the "latitude" field in the mutation.
-func (m *SensorMutation) Latitude() (r float64, exists bool) {
-	v := m.latitude
+// ElectricCurrent returns the value of the "electric_current" field in the mutation.
+func (m *SensorMutation) ElectricCurrent() (r float64, exists bool) {
+	v := m.electric_current
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldLatitude returns the old "latitude" field's value of the Sensor entity.
+// OldElectricCurrent returns the old "electric_current" field's value of the Sensor entity.
 // If the Sensor object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SensorMutation) OldLatitude(ctx context.Context) (v float64, err error) {
+func (m *SensorMutation) OldElectricCurrent(ctx context.Context) (v float64, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldLatitude is only allowed on UpdateOne operations")
+		return v, errors.New("OldElectricCurrent is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldLatitude requires an ID field in the mutation")
+		return v, errors.New("OldElectricCurrent requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldLatitude: %w", err)
+		return v, fmt.Errorf("querying old value for OldElectricCurrent: %w", err)
 	}
-	return oldValue.Latitude, nil
+	return oldValue.ElectricCurrent, nil
 }
 
-// AddLatitude adds f to the "latitude" field.
-func (m *SensorMutation) AddLatitude(f float64) {
-	if m.addlatitude != nil {
-		*m.addlatitude += f
+// AddElectricCurrent adds f to the "electric_current" field.
+func (m *SensorMutation) AddElectricCurrent(f float64) {
+	if m.addelectric_current != nil {
+		*m.addelectric_current += f
 	} else {
-		m.addlatitude = &f
+		m.addelectric_current = &f
 	}
 }
 
-// AddedLatitude returns the value that was added to the "latitude" field in this mutation.
-func (m *SensorMutation) AddedLatitude() (r float64, exists bool) {
-	v := m.addlatitude
+// AddedElectricCurrent returns the value that was added to the "electric_current" field in this mutation.
+func (m *SensorMutation) AddedElectricCurrent() (r float64, exists bool) {
+	v := m.addelectric_current
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ResetLatitude resets all changes to the "latitude" field.
-func (m *SensorMutation) ResetLatitude() {
-	m.latitude = nil
-	m.addlatitude = nil
-}
-
-// SetType sets the "type" field.
-func (m *SensorMutation) SetType(s string) {
-	m._type = &s
-}
-
-// GetType returns the value of the "type" field in the mutation.
-func (m *SensorMutation) GetType() (r string, exists bool) {
-	v := m._type
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldType returns the old "type" field's value of the Sensor entity.
-// If the Sensor object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SensorMutation) OldType(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldType is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldType requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldType: %w", err)
-	}
-	return oldValue.Type, nil
-}
-
-// ResetType resets all changes to the "type" field.
-func (m *SensorMutation) ResetType() {
-	m._type = nil
-}
-
-// SetValue sets the "value" field.
-func (m *SensorMutation) SetValue(f float64) {
-	m.value = &f
-	m.addvalue = nil
-}
-
-// Value returns the value of the "value" field in the mutation.
-func (m *SensorMutation) Value() (r float64, exists bool) {
-	v := m.value
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldValue returns the old "value" field's value of the Sensor entity.
-// If the Sensor object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SensorMutation) OldValue(ctx context.Context) (v float64, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldValue is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldValue requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldValue: %w", err)
-	}
-	return oldValue.Value, nil
-}
-
-// AddValue adds f to the "value" field.
-func (m *SensorMutation) AddValue(f float64) {
-	if m.addvalue != nil {
-		*m.addvalue += f
-	} else {
-		m.addvalue = &f
-	}
-}
-
-// AddedValue returns the value that was added to the "value" field in this mutation.
-func (m *SensorMutation) AddedValue() (r float64, exists bool) {
-	v := m.addvalue
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetValue resets all changes to the "value" field.
-func (m *SensorMutation) ResetValue() {
-	m.value = nil
-	m.addvalue = nil
+// ResetElectricCurrent resets all changes to the "electric_current" field.
+func (m *SensorMutation) ResetElectricCurrent() {
+	m.electric_current = nil
+	m.addelectric_current = nil
 }
 
 // SetCreateTime sets the "create_time" field.
@@ -448,21 +353,15 @@ func (m *SensorMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *SensorMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 4)
 	if m.sensor_id != nil {
 		fields = append(fields, sensor.FieldSensorID)
 	}
-	if m.longitude != nil {
-		fields = append(fields, sensor.FieldLongitude)
+	if m.temperature != nil {
+		fields = append(fields, sensor.FieldTemperature)
 	}
-	if m.latitude != nil {
-		fields = append(fields, sensor.FieldLatitude)
-	}
-	if m._type != nil {
-		fields = append(fields, sensor.FieldType)
-	}
-	if m.value != nil {
-		fields = append(fields, sensor.FieldValue)
+	if m.electric_current != nil {
+		fields = append(fields, sensor.FieldElectricCurrent)
 	}
 	if m.create_time != nil {
 		fields = append(fields, sensor.FieldCreateTime)
@@ -477,14 +376,10 @@ func (m *SensorMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case sensor.FieldSensorID:
 		return m.SensorID()
-	case sensor.FieldLongitude:
-		return m.Longitude()
-	case sensor.FieldLatitude:
-		return m.Latitude()
-	case sensor.FieldType:
-		return m.GetType()
-	case sensor.FieldValue:
-		return m.Value()
+	case sensor.FieldTemperature:
+		return m.Temperature()
+	case sensor.FieldElectricCurrent:
+		return m.ElectricCurrent()
 	case sensor.FieldCreateTime:
 		return m.CreateTime()
 	}
@@ -498,14 +393,10 @@ func (m *SensorMutation) OldField(ctx context.Context, name string) (ent.Value, 
 	switch name {
 	case sensor.FieldSensorID:
 		return m.OldSensorID(ctx)
-	case sensor.FieldLongitude:
-		return m.OldLongitude(ctx)
-	case sensor.FieldLatitude:
-		return m.OldLatitude(ctx)
-	case sensor.FieldType:
-		return m.OldType(ctx)
-	case sensor.FieldValue:
-		return m.OldValue(ctx)
+	case sensor.FieldTemperature:
+		return m.OldTemperature(ctx)
+	case sensor.FieldElectricCurrent:
+		return m.OldElectricCurrent(ctx)
 	case sensor.FieldCreateTime:
 		return m.OldCreateTime(ctx)
 	}
@@ -524,33 +415,19 @@ func (m *SensorMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetSensorID(v)
 		return nil
-	case sensor.FieldLongitude:
+	case sensor.FieldTemperature:
 		v, ok := value.(float64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetLongitude(v)
+		m.SetTemperature(v)
 		return nil
-	case sensor.FieldLatitude:
+	case sensor.FieldElectricCurrent:
 		v, ok := value.(float64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetLatitude(v)
-		return nil
-	case sensor.FieldType:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetType(v)
-		return nil
-	case sensor.FieldValue:
-		v, ok := value.(float64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetValue(v)
+		m.SetElectricCurrent(v)
 		return nil
 	case sensor.FieldCreateTime:
 		v, ok := value.(time.Time)
@@ -567,14 +444,11 @@ func (m *SensorMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *SensorMutation) AddedFields() []string {
 	var fields []string
-	if m.addlongitude != nil {
-		fields = append(fields, sensor.FieldLongitude)
+	if m.addtemperature != nil {
+		fields = append(fields, sensor.FieldTemperature)
 	}
-	if m.addlatitude != nil {
-		fields = append(fields, sensor.FieldLatitude)
-	}
-	if m.addvalue != nil {
-		fields = append(fields, sensor.FieldValue)
+	if m.addelectric_current != nil {
+		fields = append(fields, sensor.FieldElectricCurrent)
 	}
 	return fields
 }
@@ -584,12 +458,10 @@ func (m *SensorMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *SensorMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case sensor.FieldLongitude:
-		return m.AddedLongitude()
-	case sensor.FieldLatitude:
-		return m.AddedLatitude()
-	case sensor.FieldValue:
-		return m.AddedValue()
+	case sensor.FieldTemperature:
+		return m.AddedTemperature()
+	case sensor.FieldElectricCurrent:
+		return m.AddedElectricCurrent()
 	}
 	return nil, false
 }
@@ -599,26 +471,19 @@ func (m *SensorMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *SensorMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case sensor.FieldLongitude:
+	case sensor.FieldTemperature:
 		v, ok := value.(float64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddLongitude(v)
+		m.AddTemperature(v)
 		return nil
-	case sensor.FieldLatitude:
+	case sensor.FieldElectricCurrent:
 		v, ok := value.(float64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddLatitude(v)
-		return nil
-	case sensor.FieldValue:
-		v, ok := value.(float64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddValue(v)
+		m.AddElectricCurrent(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Sensor numeric field %s", name)
@@ -650,17 +515,11 @@ func (m *SensorMutation) ResetField(name string) error {
 	case sensor.FieldSensorID:
 		m.ResetSensorID()
 		return nil
-	case sensor.FieldLongitude:
-		m.ResetLongitude()
+	case sensor.FieldTemperature:
+		m.ResetTemperature()
 		return nil
-	case sensor.FieldLatitude:
-		m.ResetLatitude()
-		return nil
-	case sensor.FieldType:
-		m.ResetType()
-		return nil
-	case sensor.FieldValue:
-		m.ResetValue()
+	case sensor.FieldElectricCurrent:
+		m.ResetElectricCurrent()
 		return nil
 	case sensor.FieldCreateTime:
 		m.ResetCreateTime()

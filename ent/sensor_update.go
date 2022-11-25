@@ -18,8 +18,9 @@ import (
 // SensorUpdate is the builder for updating Sensor entities.
 type SensorUpdate struct {
 	config
-	hooks    []Hook
-	mutation *SensorMutation
+	hooks     []Hook
+	mutation  *SensorMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the SensorUpdate builder.
@@ -34,48 +35,29 @@ func (su *SensorUpdate) SetSensorID(s string) *SensorUpdate {
 	return su
 }
 
-// SetLongitude sets the "longitude" field.
-func (su *SensorUpdate) SetLongitude(f float64) *SensorUpdate {
-	su.mutation.ResetLongitude()
-	su.mutation.SetLongitude(f)
+// SetTemperature sets the "temperature" field.
+func (su *SensorUpdate) SetTemperature(f float64) *SensorUpdate {
+	su.mutation.ResetTemperature()
+	su.mutation.SetTemperature(f)
 	return su
 }
 
-// AddLongitude adds f to the "longitude" field.
-func (su *SensorUpdate) AddLongitude(f float64) *SensorUpdate {
-	su.mutation.AddLongitude(f)
+// AddTemperature adds f to the "temperature" field.
+func (su *SensorUpdate) AddTemperature(f float64) *SensorUpdate {
+	su.mutation.AddTemperature(f)
 	return su
 }
 
-// SetLatitude sets the "latitude" field.
-func (su *SensorUpdate) SetLatitude(f float64) *SensorUpdate {
-	su.mutation.ResetLatitude()
-	su.mutation.SetLatitude(f)
+// SetElectricCurrent sets the "electric_current" field.
+func (su *SensorUpdate) SetElectricCurrent(f float64) *SensorUpdate {
+	su.mutation.ResetElectricCurrent()
+	su.mutation.SetElectricCurrent(f)
 	return su
 }
 
-// AddLatitude adds f to the "latitude" field.
-func (su *SensorUpdate) AddLatitude(f float64) *SensorUpdate {
-	su.mutation.AddLatitude(f)
-	return su
-}
-
-// SetType sets the "type" field.
-func (su *SensorUpdate) SetType(s string) *SensorUpdate {
-	su.mutation.SetType(s)
-	return su
-}
-
-// SetValue sets the "value" field.
-func (su *SensorUpdate) SetValue(f float64) *SensorUpdate {
-	su.mutation.ResetValue()
-	su.mutation.SetValue(f)
-	return su
-}
-
-// AddValue adds f to the "value" field.
-func (su *SensorUpdate) AddValue(f float64) *SensorUpdate {
-	su.mutation.AddValue(f)
+// AddElectricCurrent adds f to the "electric_current" field.
+func (su *SensorUpdate) AddElectricCurrent(f float64) *SensorUpdate {
+	su.mutation.AddElectricCurrent(f)
 	return su
 }
 
@@ -144,6 +126,12 @@ func (su *SensorUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (su *SensorUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *SensorUpdate {
+	su.modifiers = append(su.modifiers, modifiers...)
+	return su
+}
+
 func (su *SensorUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -165,30 +153,22 @@ func (su *SensorUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := su.mutation.SensorID(); ok {
 		_spec.SetField(sensor.FieldSensorID, field.TypeString, value)
 	}
-	if value, ok := su.mutation.Longitude(); ok {
-		_spec.SetField(sensor.FieldLongitude, field.TypeFloat64, value)
+	if value, ok := su.mutation.Temperature(); ok {
+		_spec.SetField(sensor.FieldTemperature, field.TypeFloat64, value)
 	}
-	if value, ok := su.mutation.AddedLongitude(); ok {
-		_spec.AddField(sensor.FieldLongitude, field.TypeFloat64, value)
+	if value, ok := su.mutation.AddedTemperature(); ok {
+		_spec.AddField(sensor.FieldTemperature, field.TypeFloat64, value)
 	}
-	if value, ok := su.mutation.Latitude(); ok {
-		_spec.SetField(sensor.FieldLatitude, field.TypeFloat64, value)
+	if value, ok := su.mutation.ElectricCurrent(); ok {
+		_spec.SetField(sensor.FieldElectricCurrent, field.TypeFloat64, value)
 	}
-	if value, ok := su.mutation.AddedLatitude(); ok {
-		_spec.AddField(sensor.FieldLatitude, field.TypeFloat64, value)
-	}
-	if value, ok := su.mutation.GetType(); ok {
-		_spec.SetField(sensor.FieldType, field.TypeString, value)
-	}
-	if value, ok := su.mutation.Value(); ok {
-		_spec.SetField(sensor.FieldValue, field.TypeFloat64, value)
-	}
-	if value, ok := su.mutation.AddedValue(); ok {
-		_spec.AddField(sensor.FieldValue, field.TypeFloat64, value)
+	if value, ok := su.mutation.AddedElectricCurrent(); ok {
+		_spec.AddField(sensor.FieldElectricCurrent, field.TypeFloat64, value)
 	}
 	if value, ok := su.mutation.CreateTime(); ok {
 		_spec.SetField(sensor.FieldCreateTime, field.TypeTime, value)
 	}
+	_spec.AddModifiers(su.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, su.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{sensor.Label}
@@ -203,9 +183,10 @@ func (su *SensorUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // SensorUpdateOne is the builder for updating a single Sensor entity.
 type SensorUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *SensorMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *SensorMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetSensorID sets the "sensor_id" field.
@@ -214,48 +195,29 @@ func (suo *SensorUpdateOne) SetSensorID(s string) *SensorUpdateOne {
 	return suo
 }
 
-// SetLongitude sets the "longitude" field.
-func (suo *SensorUpdateOne) SetLongitude(f float64) *SensorUpdateOne {
-	suo.mutation.ResetLongitude()
-	suo.mutation.SetLongitude(f)
+// SetTemperature sets the "temperature" field.
+func (suo *SensorUpdateOne) SetTemperature(f float64) *SensorUpdateOne {
+	suo.mutation.ResetTemperature()
+	suo.mutation.SetTemperature(f)
 	return suo
 }
 
-// AddLongitude adds f to the "longitude" field.
-func (suo *SensorUpdateOne) AddLongitude(f float64) *SensorUpdateOne {
-	suo.mutation.AddLongitude(f)
+// AddTemperature adds f to the "temperature" field.
+func (suo *SensorUpdateOne) AddTemperature(f float64) *SensorUpdateOne {
+	suo.mutation.AddTemperature(f)
 	return suo
 }
 
-// SetLatitude sets the "latitude" field.
-func (suo *SensorUpdateOne) SetLatitude(f float64) *SensorUpdateOne {
-	suo.mutation.ResetLatitude()
-	suo.mutation.SetLatitude(f)
+// SetElectricCurrent sets the "electric_current" field.
+func (suo *SensorUpdateOne) SetElectricCurrent(f float64) *SensorUpdateOne {
+	suo.mutation.ResetElectricCurrent()
+	suo.mutation.SetElectricCurrent(f)
 	return suo
 }
 
-// AddLatitude adds f to the "latitude" field.
-func (suo *SensorUpdateOne) AddLatitude(f float64) *SensorUpdateOne {
-	suo.mutation.AddLatitude(f)
-	return suo
-}
-
-// SetType sets the "type" field.
-func (suo *SensorUpdateOne) SetType(s string) *SensorUpdateOne {
-	suo.mutation.SetType(s)
-	return suo
-}
-
-// SetValue sets the "value" field.
-func (suo *SensorUpdateOne) SetValue(f float64) *SensorUpdateOne {
-	suo.mutation.ResetValue()
-	suo.mutation.SetValue(f)
-	return suo
-}
-
-// AddValue adds f to the "value" field.
-func (suo *SensorUpdateOne) AddValue(f float64) *SensorUpdateOne {
-	suo.mutation.AddValue(f)
+// AddElectricCurrent adds f to the "electric_current" field.
+func (suo *SensorUpdateOne) AddElectricCurrent(f float64) *SensorUpdateOne {
+	suo.mutation.AddElectricCurrent(f)
 	return suo
 }
 
@@ -337,6 +299,12 @@ func (suo *SensorUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (suo *SensorUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *SensorUpdateOne {
+	suo.modifiers = append(suo.modifiers, modifiers...)
+	return suo
+}
+
 func (suo *SensorUpdateOne) sqlSave(ctx context.Context) (_node *Sensor, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -375,30 +343,22 @@ func (suo *SensorUpdateOne) sqlSave(ctx context.Context) (_node *Sensor, err err
 	if value, ok := suo.mutation.SensorID(); ok {
 		_spec.SetField(sensor.FieldSensorID, field.TypeString, value)
 	}
-	if value, ok := suo.mutation.Longitude(); ok {
-		_spec.SetField(sensor.FieldLongitude, field.TypeFloat64, value)
+	if value, ok := suo.mutation.Temperature(); ok {
+		_spec.SetField(sensor.FieldTemperature, field.TypeFloat64, value)
 	}
-	if value, ok := suo.mutation.AddedLongitude(); ok {
-		_spec.AddField(sensor.FieldLongitude, field.TypeFloat64, value)
+	if value, ok := suo.mutation.AddedTemperature(); ok {
+		_spec.AddField(sensor.FieldTemperature, field.TypeFloat64, value)
 	}
-	if value, ok := suo.mutation.Latitude(); ok {
-		_spec.SetField(sensor.FieldLatitude, field.TypeFloat64, value)
+	if value, ok := suo.mutation.ElectricCurrent(); ok {
+		_spec.SetField(sensor.FieldElectricCurrent, field.TypeFloat64, value)
 	}
-	if value, ok := suo.mutation.AddedLatitude(); ok {
-		_spec.AddField(sensor.FieldLatitude, field.TypeFloat64, value)
-	}
-	if value, ok := suo.mutation.GetType(); ok {
-		_spec.SetField(sensor.FieldType, field.TypeString, value)
-	}
-	if value, ok := suo.mutation.Value(); ok {
-		_spec.SetField(sensor.FieldValue, field.TypeFloat64, value)
-	}
-	if value, ok := suo.mutation.AddedValue(); ok {
-		_spec.AddField(sensor.FieldValue, field.TypeFloat64, value)
+	if value, ok := suo.mutation.AddedElectricCurrent(); ok {
+		_spec.AddField(sensor.FieldElectricCurrent, field.TypeFloat64, value)
 	}
 	if value, ok := suo.mutation.CreateTime(); ok {
 		_spec.SetField(sensor.FieldCreateTime, field.TypeTime, value)
 	}
+	_spec.AddModifiers(suo.modifiers...)
 	_node = &Sensor{config: suo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

@@ -27,27 +27,15 @@ func (sc *SensorCreate) SetSensorID(s string) *SensorCreate {
 	return sc
 }
 
-// SetLongitude sets the "longitude" field.
-func (sc *SensorCreate) SetLongitude(f float64) *SensorCreate {
-	sc.mutation.SetLongitude(f)
+// SetTemperature sets the "temperature" field.
+func (sc *SensorCreate) SetTemperature(f float64) *SensorCreate {
+	sc.mutation.SetTemperature(f)
 	return sc
 }
 
-// SetLatitude sets the "latitude" field.
-func (sc *SensorCreate) SetLatitude(f float64) *SensorCreate {
-	sc.mutation.SetLatitude(f)
-	return sc
-}
-
-// SetType sets the "type" field.
-func (sc *SensorCreate) SetType(s string) *SensorCreate {
-	sc.mutation.SetType(s)
-	return sc
-}
-
-// SetValue sets the "value" field.
-func (sc *SensorCreate) SetValue(f float64) *SensorCreate {
-	sc.mutation.SetValue(f)
+// SetElectricCurrent sets the "electric_current" field.
+func (sc *SensorCreate) SetElectricCurrent(f float64) *SensorCreate {
+	sc.mutation.SetElectricCurrent(f)
 	return sc
 }
 
@@ -159,17 +147,11 @@ func (sc *SensorCreate) check() error {
 	if _, ok := sc.mutation.SensorID(); !ok {
 		return &ValidationError{Name: "sensor_id", err: errors.New(`ent: missing required field "Sensor.sensor_id"`)}
 	}
-	if _, ok := sc.mutation.Longitude(); !ok {
-		return &ValidationError{Name: "longitude", err: errors.New(`ent: missing required field "Sensor.longitude"`)}
+	if _, ok := sc.mutation.Temperature(); !ok {
+		return &ValidationError{Name: "temperature", err: errors.New(`ent: missing required field "Sensor.temperature"`)}
 	}
-	if _, ok := sc.mutation.Latitude(); !ok {
-		return &ValidationError{Name: "latitude", err: errors.New(`ent: missing required field "Sensor.latitude"`)}
-	}
-	if _, ok := sc.mutation.GetType(); !ok {
-		return &ValidationError{Name: "type", err: errors.New(`ent: missing required field "Sensor.type"`)}
-	}
-	if _, ok := sc.mutation.Value(); !ok {
-		return &ValidationError{Name: "value", err: errors.New(`ent: missing required field "Sensor.value"`)}
+	if _, ok := sc.mutation.ElectricCurrent(); !ok {
+		return &ValidationError{Name: "electric_current", err: errors.New(`ent: missing required field "Sensor.electric_current"`)}
 	}
 	if _, ok := sc.mutation.CreateTime(); !ok {
 		return &ValidationError{Name: "create_time", err: errors.New(`ent: missing required field "Sensor.create_time"`)}
@@ -214,21 +196,13 @@ func (sc *SensorCreate) createSpec() (*Sensor, *sqlgraph.CreateSpec) {
 		_spec.SetField(sensor.FieldSensorID, field.TypeString, value)
 		_node.SensorID = value
 	}
-	if value, ok := sc.mutation.Longitude(); ok {
-		_spec.SetField(sensor.FieldLongitude, field.TypeFloat64, value)
-		_node.Longitude = value
+	if value, ok := sc.mutation.Temperature(); ok {
+		_spec.SetField(sensor.FieldTemperature, field.TypeFloat64, value)
+		_node.Temperature = value
 	}
-	if value, ok := sc.mutation.Latitude(); ok {
-		_spec.SetField(sensor.FieldLatitude, field.TypeFloat64, value)
-		_node.Latitude = value
-	}
-	if value, ok := sc.mutation.GetType(); ok {
-		_spec.SetField(sensor.FieldType, field.TypeString, value)
-		_node.Type = value
-	}
-	if value, ok := sc.mutation.Value(); ok {
-		_spec.SetField(sensor.FieldValue, field.TypeFloat64, value)
-		_node.Value = value
+	if value, ok := sc.mutation.ElectricCurrent(); ok {
+		_spec.SetField(sensor.FieldElectricCurrent, field.TypeFloat64, value)
+		_node.ElectricCurrent = value
 	}
 	if value, ok := sc.mutation.CreateTime(); ok {
 		_spec.SetField(sensor.FieldCreateTime, field.TypeTime, value)

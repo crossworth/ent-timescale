@@ -13,14 +13,10 @@ const (
 	FieldID = "id"
 	// FieldSensorID holds the string denoting the sensor_id field in the database.
 	FieldSensorID = "sensor_id"
-	// FieldLongitude holds the string denoting the longitude field in the database.
-	FieldLongitude = "longitude"
-	// FieldLatitude holds the string denoting the latitude field in the database.
-	FieldLatitude = "latitude"
-	// FieldType holds the string denoting the type field in the database.
-	FieldType = "type"
-	// FieldValue holds the string denoting the value field in the database.
-	FieldValue = "value"
+	// FieldTemperature holds the string denoting the temperature field in the database.
+	FieldTemperature = "temperature"
+	// FieldElectricCurrent holds the string denoting the electric_current field in the database.
+	FieldElectricCurrent = "electric_current"
 	// FieldCreateTime holds the string denoting the create_time field in the database.
 	FieldCreateTime = "create_time"
 	// Table holds the table name of the sensor in the database.
@@ -31,10 +27,8 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldSensorID,
-	FieldLongitude,
-	FieldLatitude,
-	FieldType,
-	FieldValue,
+	FieldTemperature,
+	FieldElectricCurrent,
 	FieldCreateTime,
 }
 
