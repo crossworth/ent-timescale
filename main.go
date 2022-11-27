@@ -10,6 +10,8 @@ import (
 	"ent-timescale/ent/migrate"
 	"ent-timescale/ent/sensor"
 
+	atlas "ariga.io/atlas/sql/schema"
+
 	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/schema"
@@ -110,14 +112,15 @@ func main() {
 }
 
 func WithoutPrimaryKey(tableName string) schema.MigrateOption {
-	return schema.WithHooks(func(next schema.Creator) schema.Creator {
-		return schema.CreateFunc(func(ctx context.Context, tables ...*schema.Table) error {
-			for i := range tables {
-				if tables[i].Name == tableName {
-					tables[i].PrimaryKey = nil
-				}
+	return schema.WithDiffHook(func(next schema.Differ) schema.Differ {
+		return schema.DiffFunc(func(current, desired *atlas.Schema) ([]atlas.Change, error) {
+			if t, ok := current.Table(tableName); ok {
+				t.PrimaryKey = nil
 			}
-			return next.Create(ctx, tables...)
+			if t, ok := desired.Table(tableName); ok {
+				t.PrimaryKey = nil
+			}
+			return next.Diff(current, desired)
 		})
 	})
 }
